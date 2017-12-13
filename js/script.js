@@ -6,6 +6,12 @@ app.config = {
 	}
 }
 
+
+Array.prototype.clone = function(){
+  return this.map(e => Array.isArray(e) ? e.clone() : e);
+};
+
+
 app.Square = Backbone.Model.extend({
    /*
 	* Types: 'space', 'wall'
@@ -210,28 +216,11 @@ app.MazeView = Backbone.View.extend({
 	},
 
 	solidMaze: function() {
-		const mazePredefined = new PeopleNet( {  metrics: mazeOne, start: mazeOneStart, end: mazeOneEnd, rows: mazeOneColumns, columns: mazeOneColumns, name: 'small-matrix' } );
-		const generatedMaze = mazePredefined.generateMaze();
-		let shortestPath = '<div>';
-		 	  shortestPath = 'Path: ';
-			  shortestPath += JSON.stringify( generatedMaze.path );
-			  shortestPath += '</div>';
-
-		$("#staticMazePath").html( shortestPath );
-		$("#staticMaze").html( generatedMaze.maze );
+		return false;
 	},
 
 	solidMazeTwo: function() {
-		const mazePredefined = new PeopleNet( {  metrics: mazeThree, start: mazeThreeStart, end: mazeThreeEnd, rows: mazeThreeRow, columns: mazeThreeColumns, name: 'large-matrix' } );
-		const generatedMaze = mazePredefined.generateMaze();
-
-		let shortestPath = '<div>';
-			  shortestPath = 'Path: ';
-			  shortestPath += JSON.stringify( generatedMaze.path );
-			  shortestPath += '</div>';
-
-		$("#staticMazePath").html( shortestPath );
-		$("#staticMaze").html( generatedMaze.maze );
+		return false;
 	},
 
 	renderSquare: function(item){
@@ -392,6 +381,44 @@ app.ControlsView = Backbone.View.extend({
 
 });
 
+app.triggerEvents = ( props ) => {
+
+	var mazeCloneOne = mazeOne.clone();
+	var mazeCloneThree = mazeThree.clone();
+
+	let params = { metrics: mazeCloneThree, start: mazeThreeStart, end: mazeThreeEnd, rows: mazeThreeRow, columns: mazeThreeColumns, name: 'large-matrix' };
+	if ( props === 'mazeFirstBtn' ) {
+		params = { metrics: mazeCloneOne, start: mazeOneStart, end: mazeOneEnd, rows: mazeOneColumns, columns: mazeOneColumns, name: 'small-matrix' };
+	}
+	let mazePredefined = new PeopleNet( params );
+	let generatedMaze = mazePredefined.generateMaze();
+	let shortestPath = '<div>';
+	 	  shortestPath = 'Path: ';
+		  shortestPath += JSON.stringify( generatedMaze.path );
+		  shortestPath += '</div>';
+
+	$("#staticMazePath").html( shortestPath );
+	$("#staticMaze").html( generatedMaze.maze );
+
+}
+
+app.buttonEvenets = () => {
+
+	$('.mazeFirstBtn, .mazeSsecondBtn').on('click', ( event ) => {
+		event.preventDefault();
+		let $this = $( event.currentTarget);
+		if ( $this.hasClass('mazeFirstBtn') ) {
+			app.triggerEvents('mazeFirstBtn');
+		} else {
+			app.triggerEvents('mazeSecondBtn');
+		}
+		return false;
+	})
+
+	$('.mazeFirstBtn').trigger('click');
+}
+
+
 /*
  * App Initialization
  */
@@ -421,6 +448,7 @@ app.init = function( width, height ) {
     app.goalView = new app.GoalView({model: app.goalModel });
     // Controls:
     new app.ControlsView();
+    app.buttonEvenets();
 
 }
 

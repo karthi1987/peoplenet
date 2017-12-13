@@ -147,3 +147,11 @@ body {
 	min-height: 500px;
 }
 
+.btn-default {
+	margin: 0 5px;
+	font-weight: 500;
+}
+.clearfix {
+	clear:both;
+}
+
