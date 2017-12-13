@@ -1,0 +1,149 @@
+body {
+	text-align: center;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+#maze {
+	position: relative;
+	width: 100%;
+	margin: 0 auto;
+	color: #333;
+	font-weight: 500;
+}
+
+.square {
+	width: 30px;
+	height: 30px;
+	position: absolute;
+	border: 1px solid #eee;
+	cursor: pointer;
+	background: #563d7c26;
+	z-index: 10;
+}
+
+.space {
+	background: #AEAEAE;
+}
+
+.wall {
+	background: #232323;
+	color:#FFF;
+}
+
+.agent {
+	width: 30px;
+	height: 30px;
+	background: #5bc0de;
+	position: absolute;
+	z-index: 99;
+}
+
+.goal {
+	width: 30px;
+	height: 30px;
+	background: #d9534f;
+	position: absolute;
+	z-index: 99;
+}
+
+.square.active {
+	background: #337ab7;
+	color: #FFF;
+}
+
+#controls {
+	margin-bottom: 10px;
+	margin-top: 20px;
+}
+
+#exTab2 h3 {
+	color : white;
+	background-color: #428bca;
+	padding : 5px 15px;
+}
+.nav-tabs a {
+	font-size: 15px;
+	font-weight: 600;
+}
+.panel {
+	width: auto;
+}
+
+.panel-header {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-flow: row nowrap;
+	margin-top: 20px;
+}
+
+#exTab2 .panel-title {
+	background: transparent;
+	color: #333;
+}
+
+.panel-2 {
+	margin-left: 25px;
+}
+
+
+.matrix-maze {
+	display: flex;
+	width: 100%;
+}
+
+.small-matrix {
+	width: 300px;
+}
+
+.maze-wrapper {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex-flow: column nowrap;
+	color: #333;
+}
+
+.rows-maze {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-top: 1px solid #eee;
+	width: 100%;
+}    
+
+.columns-maze {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 30px; 
+	height: 30px;
+	border-right: 1px solid #eee;
+	background: #563d7c26;
+}
+.columns-maze-white {
+	background: #337ab7;
+	color: #FFF;
+	font-size: 1.2em;
+	font-weight: 700;
+}
+
+#staticMaze {
+	clear: both;
+	margin: 0 auto;
+	display: flex;
+	justify-content: center;
+}
+
+#staticMazePath {
+	clear: both;
+	margin-bottom: 20px;
+	font-size: 15px;
+	font-weight: 600;
+}
+.maze-custom-wrapper {
+	margin-top: 30px;
+	clear: both;
+	min-height: 500px;
+}
+
