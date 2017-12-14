@@ -155,3 +155,24 @@ body {
 	clear:both;
 }
 
+#settings {
+	clear:both;
+	margin: 5px 0;
+	height: 20px;
+	display: flex;
+    color: #000;
+    flex-flow: row nowrap;
+}
+
+#settings .green span {
+	background: #00FF00;
+}
+
+#settings .red  {
+	margin-left: 10px;
+}
+
+#settings .red span {
+	background: #c00;
+}
+
