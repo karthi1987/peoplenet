@@ -47,6 +47,6 @@ List of following buttons which controls the maze,
   1. **Edit Start Coordinates**: Click this button to select any square in grid inorder to change starting coordinates(X) When user wants to change their Starting Coordinates(X)
   3. **Edit End Coordinates**: Click this button to select any square in grid inorder to change ending coordinates(Y) When user wants to change.
   3. **Add Wall**: After user set their XY Coordinates, they can choose the wall/block between the XY Coordinates by selecting the Add Wall button at the top
-  4. ** Find shortest path**: After user set XY Coordinates and wall, inorder to find the shortest path, click on this button to see the path in the grid.
+  4. **Find shortest path**: After user set XY Coordinates and wall, inorder to find the shortest path, click on this button to see the path in the grid.
   4. **Clear path**: User can clear their selected path.
   5. **Clear everything**: It clear everything on the maze, It has an exception of XY Coordinates.
