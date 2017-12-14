@@ -1,18 +1,21 @@
-var app = app || {};
-app.config = {
+'use strict';
+
+Array.prototype.clone = function(){
+  return this.map(e => Array.isArray(e) ? e.clone() : e);
+};
+
+/*
+ * App Namespace
+ */
+var PeopleNetApp = PeopleNetApp || {};
+PeopleNetApp.config = {
 	square: {
 		width: 30,
 		height: 30
 	}
 }
 
-
-Array.prototype.clone = function(){
-  return this.map(e => Array.isArray(e) ? e.clone() : e);
-};
-
-
-app.Square = Backbone.Model.extend({
+PeopleNetApp.Square = Backbone.Model.extend({
    /*
 	* Types: 'space', 'wall'
 	*/ 
@@ -30,14 +33,14 @@ app.Square = Backbone.Model.extend({
  * Maze Collection for the Square
  */
 
-app.Maze = Backbone.Collection.extend({
-	model: app.Square
+PeopleNetApp.Maze = Backbone.Collection.extend({
+	model: PeopleNetApp.Square
 });
 
 /*
  * Starting Coordinates Model( X, Y )
  */
-app.Agent = Backbone.Model.extend({
+PeopleNetApp.Agent = Backbone.Model.extend({
 
 	defaults: {
 		x: 5,
@@ -45,7 +48,7 @@ app.Agent = Backbone.Model.extend({
 	},
 
 	initialize: function() {
-		app._vent.on('square:setAgentPosition', this.setAgentPosition, this);
+		PeopleNetApp._vent.on('square:setAgentPosition', this.setAgentPosition, this);
 	},
 
 	setAgentPosition: function(clickPos) {
@@ -61,7 +64,7 @@ app.Agent = Backbone.Model.extend({
 /*
  * Ending(Destination) Coordinates Model( X, Y )
  */
-app.Goal = Backbone.Model.extend({
+PeopleNetApp.Goal = Backbone.Model.extend({
 
 	defaults: {
 		x: 25,
@@ -69,7 +72,7 @@ app.Goal = Backbone.Model.extend({
 	},
 
 	initialize: function() {
-		app._vent.on('square:setGoalPosition', this.setGoalPosition, this);
+		PeopleNetApp._vent.on('square:setGoalPosition', this.setGoalPosition, this);
 	},
 
 	setGoalPosition: function(clickPos) {
@@ -82,7 +85,11 @@ app.Goal = Backbone.Model.extend({
 
 });
 
-app.SquareView = Backbone.View.extend({
+/*
+ *  Sqaure view in Grid
+ */
+
+PeopleNetApp.SquareView = Backbone.View.extend({
 
 	tagName: 'div',
 	className: 'square',
@@ -99,8 +106,8 @@ app.SquareView = Backbone.View.extend({
 	render: function(){
 
 		this.$el.html(this.template(this.model.attributes));
-		var left = (this.model.get('x')) * app.config.square.width;
-		var top = (this.model.get('y')) * app.config.square.width;
+		var left = (this.model.get('x')) * PeopleNetApp.config.square.width;
+		var top = (this.model.get('y')) * PeopleNetApp.config.square.width;
 		this.$el.css('left', left);
 		this.$el.css('top', top);
 
@@ -114,7 +121,7 @@ app.SquareView = Backbone.View.extend({
 	},
 
 	toggleSquare: function() {
-		if (app.editState == 'maze') {
+		if (PeopleNetApp.editState == 'maze') {
 			var type = this.model.get('type');
 			if (type == 'space') {
 				type = 'wall';
@@ -129,16 +136,21 @@ app.SquareView = Backbone.View.extend({
 				this.$el.addClass('wall');
 				this.$el.removeClass('space');
 			}
-		} else if (app.editState == 'agent') {
-			app._vent.trigger('square:setAgentPosition', this.model);
-		} else if (app.editState == 'goal') {
-			app._vent.trigger('square:setGoalPosition', this.model);
+		} else if (PeopleNetApp.editState == 'agent') {
+			PeopleNetApp._vent.trigger('square:setAgentPosition', this.model);
+		} else if (PeopleNetApp.editState == 'goal') {
+			PeopleNetApp._vent.trigger('square:setGoalPosition', this.model);
 		}
 	}
 
 });
 
-app.AgentView = Backbone.View.extend({
+
+/*
+ *  Starting Position view in Grid
+ */
+
+PeopleNetApp.AgentView = Backbone.View.extend({
 
 	el: $('.agent'),
 
@@ -148,8 +160,8 @@ app.AgentView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var left = (this.model.get('x')) * app.config.square.width;
-		var top = (this.model.get('y')) * app.config.square.width;
+		var left = (this.model.get('x')) * PeopleNetApp.config.square.width;
+		var top = (this.model.get('y')) * PeopleNetApp.config.square.width;
 		this.$el.css('left', left);
 		this.$el.css('top', top);
 		return this;
@@ -157,7 +169,12 @@ app.AgentView = Backbone.View.extend({
 
 });
 
-app.GoalView = Backbone.View.extend({
+
+/*
+ *  Ending Position view in Grid
+ */
+
+PeopleNetApp.GoalView = Backbone.View.extend({
 
 	el: $('.goal'),
 
@@ -167,8 +184,8 @@ app.GoalView = Backbone.View.extend({
 	},
 
 	render: function(){
-		var left = (this.model.get('x')) * app.config.square.width;
-		var top = (this.model.get('y')) * app.config.square.width;
+		var left = (this.model.get('x')) * PeopleNetApp.config.square.width;
+		var top = (this.model.get('y')) * PeopleNetApp.config.square.width;
 		this.$el.css('left', left);
 		this.$el.css('top', top);
 		return this;
@@ -176,7 +193,11 @@ app.GoalView = Backbone.View.extend({
 
 });
 
-app.MazeView = Backbone.View.extend({
+/*
+ *  Maze view in Grid
+ */
+
+PeopleNetApp.MazeView = Backbone.View.extend({
 
 	tagName: 'div',
 	className: 'maze',
@@ -184,14 +205,14 @@ app.MazeView = Backbone.View.extend({
 	queue: [],
 
 	initialize: function() {
-		this.collection = new app.Maze(app.squares);
+		this.collection = new PeopleNetApp.Maze(PeopleNetApp.squares);
 		this.$el.html(this.template());
 		this.render();
-		app._vent.on('controls:findPath', this.startPathFind, this);
-		app._vent.on('controls:clearPath', this.clearPath, this);
-		app._vent.on('controls:clearMaze', this.clearMaze, this);
-		app._vent.on('controls:solidMaze', this.solidMaze, this);
-		app._vent.on('controls:solidMazeTwo', this.solidMazeTwo, this);
+		PeopleNetApp._vent.on('controls:findPath', this.startPathFind, this);
+		PeopleNetApp._vent.on('controls:clearPath', this.clearPath, this);
+		PeopleNetApp._vent.on('controls:clearMaze', this.clearMaze, this);
+		PeopleNetApp._vent.on('controls:solidMaze', this.solidMaze, this);
+		PeopleNetApp._vent.on('controls:solidMazeTwo', this.solidMazeTwo, this);
 	},
 
 	render: function() {
@@ -210,7 +231,7 @@ app.MazeView = Backbone.View.extend({
 
 	clearMaze: function() {
 		this.queue = [];
-		this.collection = new app.Maze(app.squares);
+		this.collection = new PeopleNetApp.Maze(PeopleNetApp.squares);
 		this.$el.html(this.template());
 		this.render();
 	},
@@ -224,15 +245,15 @@ app.MazeView = Backbone.View.extend({
 	},
 
 	renderSquare: function(item){
-		var squareView = new app.SquareView({
+		var squareView = new PeopleNetApp.SquareView({
 			model: item
 		});
 		this.$el.append(squareView.render().el);
 	},
 
 	startPathFind: function() {
-		var goal_x = app.goalModel.get('x');
-		var goal_y = app.goalModel.get('y');
+		var goal_x = PeopleNetApp.goalModel.get('x');
+		var goal_y = PeopleNetApp.goalModel.get('y');
 		var square = this.getSquareAt(goal_x, goal_y);
 		square.set('distance', 0);
 		this.queue.push(square);
@@ -242,13 +263,12 @@ app.MazeView = Backbone.View.extend({
 
 	findPath: function() {
 		var self = this;
-
 		while (this.queue.length > 0) {
 		   /*
 			* Dequeue
 			*/ 
 			var oldestSquare = this.queue.pop();
-			var reachedAgent = oldestSquare.get('x') == app.agentModel.get('x') && oldestSquare.get('y') == app.agentModel.get('y');
+			var reachedAgent = oldestSquare.get('x') == PeopleNetApp.agentModel.get('x') && oldestSquare.get('y') == PeopleNetApp.agentModel.get('y');
 			if (! reachedAgent) {
 				var oldDistance = oldestSquare.get('distance');
 				var newDistance = oldDistance + 1;
@@ -276,30 +296,30 @@ app.MazeView = Backbone.View.extend({
 		if (x > 0 && ! this.isWall(x - 1, y)) {
 			adjacent.push({x: x - 1, y: y});
 		}
-		if (x < (app.width - 1) && ! this.isWall(x + 1, y)) {
+		if (x < (PeopleNetApp.width - 1) && ! this.isWall(x + 1, y)) {
 			adjacent.push({x: x + 1, y: y});
 		}
 		if (y > 0 && ! this.isWall(x, y - 1)) {
 			adjacent.push({x: x, y: y - 1});
 		}
-		if (y < (app.height - 1) && ! this.isWall(x, y + 1)) {
+		if (y < (PeopleNetApp.height - 1) && ! this.isWall(x, y + 1)) {
 			adjacent.push({x: x, y: y + 1});
 		}
 		return adjacent;
 	},
 
 	isWall: function(x, y) {
-		var square = app.mazeView.collection.findWhere({x: x, y: y});
+		var square = PeopleNetApp.mazeView.collection.findWhere({x: x, y: y});
 		return square.get('type') == 'wall';
 	},
 
 	createRoute: function() {
 		var movements = [];
-		var old_x = app.agentModel.get('x');
-		var old_y = app.agentModel.get('y');
-		// get distance value at start square:
+		var old_x = PeopleNetApp.agentModel.get('x');
+		var old_y = PeopleNetApp.agentModel.get('y');
+		/* get distance value at start square: */
 		var square = this.getSquareAt( old_x, old_y );
-		while (square.get('distance') > 0) {
+		while ( square.get('distance') > 0 ) {
 			square = this.findSquare(square);
 			if ( square ) {
 				square.set('active', true);
@@ -344,10 +364,10 @@ app.MazeView = Backbone.View.extend({
 });
 
 /*
- * App Events View( button click events )
+ * PeopleNetApp Events View( button click events )
  */
 
-app.ControlsView = Backbone.View.extend({
+PeopleNetApp.ControlsView = Backbone.View.extend({
 
 	el: $('.controls'),
 	events: {
@@ -360,35 +380,35 @@ app.ControlsView = Backbone.View.extend({
 	},
 	setState: function(e) {
 		var state = e.currentTarget.id.replace('_btn', '');
-		app.editState = state;
+		PeopleNetApp.editState = state;
 	},
 	findPath: function() {
-		app._vent.trigger('controls:findPath');
+		PeopleNetApp._vent.trigger('controls:findPath');
 	},
 	clearPath: function() {
-		app._vent.trigger('controls:clearPath');
+		PeopleNetApp._vent.trigger('controls:clearPath');
 	},
 	clearMaze: function() {
-		app._vent.trigger('controls:clearMaze');
+		PeopleNetApp._vent.trigger('controls:clearMaze');
 	},
 	solidMaze: function() {
-		app._vent.trigger('controls:solidMaze');
+		PeopleNetApp._vent.trigger('controls:solidMaze');
 	},
 	solidMazeTwo: function() {
-		app._vent.trigger('controls:solidMazeTwo');
+		PeopleNetApp._vent.trigger('controls:solidMazeTwo');
 	}
 
 
 });
 
-app.triggerEvents = ( props ) => {
+PeopleNetApp.triggerEvents = ( props ) => {
 
 	var mazeCloneOne = mazeOne.clone();
 	var mazeCloneThree = mazeThree.clone();
 
 	let params = { metrics: mazeCloneThree, start: mazeThreeStart, end: mazeThreeEnd, rows: mazeThreeRow, columns: mazeThreeColumns, name: 'large-matrix' };
 	if ( props === 'mazeFirstBtn' ) {
-		params = { metrics: mazeCloneOne, start: mazeOneStart, end: mazeOneEnd, rows: mazeOneColumns, columns: mazeOneColumns, name: 'small-matrix' };
+		params = { metrics: mazeCloneOne, start: mazeOneStart, end: mazeOneEnd, rows: mazeOneRows, columns: mazeOneColumns, name: 'small-matrix' };
 	}
 	let mazePredefined = new PeopleNet( params );
 	let generatedMaze = mazePredefined.generateMaze();
@@ -402,15 +422,15 @@ app.triggerEvents = ( props ) => {
 
 }
 
-app.buttonEvenets = () => {
+PeopleNetApp.buttonEvenets = () => {
 
 	$('.mazeFirstBtn, .mazeSsecondBtn').on('click', ( event ) => {
 		event.preventDefault();
 		let $this = $( event.currentTarget);
 		if ( $this.hasClass('mazeFirstBtn') ) {
-			app.triggerEvents('mazeFirstBtn');
+			PeopleNetApp.triggerEvents('mazeFirstBtn');
 		} else {
-			app.triggerEvents('mazeSecondBtn');
+			PeopleNetApp.triggerEvents('mazeSecondBtn');
 		}
 		return false;
 	})
@@ -418,40 +438,39 @@ app.buttonEvenets = () => {
 	$('.mazeFirstBtn').trigger('click');
 }
 
-
 /*
- * App Initialization
+ * PeopleNetApp Initialization
  */
 
-app.init = function( width, height ) {
+PeopleNetApp.init = ( width, height ) => {
 
-    app.width = width;
-    app.height = height;
-    app.editState = 'maze'; // or 'agent' or 'goal'
-    app._vent = _.extend({}, Backbone.Events);
-    app.squares = [];
+    PeopleNetApp.width = width;
+    PeopleNetApp.height = height;
+    PeopleNetApp.editState = 'maze'; /* or 'agent' or 'goal' */
+    PeopleNetApp._vent = _.extend({}, Backbone.Events);
+    PeopleNetApp.squares = [];
     let y = 0;
     let x = 0;
-    for ( y = 0; y < app.height; y++ ) {
-        for ( x = 0; x < app.width; x++ ) {
-            app.squares.push( { x:x, y:y } );
+    for ( y = 0; y < PeopleNetApp.height; y++ ) {
+        for ( x = 0; x < PeopleNetApp.width; x++ ) {
+            PeopleNetApp.squares.push( { x:x, y:y } );
         }
     }
 
-    app.mazeView = new app.MazeView();
-    $('#maze').append(app.mazeView.el);
-    // Agent:
-    app.agentModel = new app.Agent();
-    app.agentView = new app.AgentView({model: app.agentModel });
-    // Goal:
-	app.goalModel = new app.Goal();
-    app.goalView = new app.GoalView({model: app.goalModel });
-    // Controls:
-    new app.ControlsView();
-    app.buttonEvenets();
+    PeopleNetApp.mazeView = new PeopleNetApp.MazeView();
+    $('#maze').append(PeopleNetApp.mazeView.el);
+    /* Agent: */
+    PeopleNetApp.agentModel = new PeopleNetApp.Agent();
+    PeopleNetApp.agentView = new PeopleNetApp.AgentView({model: PeopleNetApp.agentModel });
+    /* Goal: */
+	PeopleNetApp.goalModel = new PeopleNetApp.Goal();
+    PeopleNetApp.goalView = new PeopleNetApp.GoalView({model: PeopleNetApp.goalModel });
+    /* Controls: */
+    new PeopleNetApp.ControlsView();
+    PeopleNetApp.buttonEvenets();
 
 }
 
 $(function(){
-	app.init( 30, 30 )
+	PeopleNetApp.init( 30, 30 )
 });

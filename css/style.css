@@ -33,7 +33,7 @@ body {
 .agent {
 	width: 30px;
 	height: 30px;
-	background: #5bc0de;
+	background: #00FF00;
 	position: absolute;
 	z-index: 99;
 }
@@ -41,7 +41,7 @@ body {
 .goal {
 	width: 30px;
 	height: 30px;
-	background: #d9534f;
+	background: #c00;
 	position: absolute;
 	z-index: 99;
 }
